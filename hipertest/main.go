@@ -38,7 +38,7 @@ func readLoginInfo(fname string) (user, passwd, domain string) {
 
 func main() {
 	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "Usage: %s PWDFILE\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s PWFILE\n", os.Args[0])
 		os.Exit(1)
 	}
 
