@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"local/hiperus"
+	"github.com/ziutek/hiperus"
 	"os"
 	"time"
 )
