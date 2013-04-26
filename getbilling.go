@@ -105,7 +105,9 @@ func (b *Billing) Scan(c *Call) (err error) {
 	if e, err = row.Get("ext_billing_id"); err != nil {
 		return
 	}
-	if c.ExtBillingId, err = e.AsUint32(); err != nil {
+	if e.Nil {
+		c.ExtBillingId = 0
+	} else if c.ExtBillingId, err = e.AsUint32(); err != nil {
 		return
 	}
 
@@ -133,28 +135,36 @@ func (b *Billing) Scan(c *Call) (err error) {
 	if e, err = row.Get("country"); err != nil {
 		return
 	}
-	if c.Country, err = e.Str(); err != nil {
+	if e.Nil {
+		c.Country = ""
+	} else if c.Country, err = e.Str(); err != nil {
 		return
 	}
 
 	if e, err = row.Get("description"); err != nil {
 		return
 	}
-	if c.Description, err = e.Str(); err != nil {
+	if e.Nil {
+		c.Description = ""
+	} else if c.Description, err = e.Str(); err != nil {
 		return
 	}
 
 	if e, err = row.Get("operator"); err != nil {
 		return
 	}
-	if c.Operator, err = e.Str(); err != nil {
+	if e.Nil {
+		c.Operator = ""
+	} else if c.Operator, err = e.Str(); err != nil {
 		return
 	}
 
 	if e, err = row.Get("type"); err != nil {
 		return
 	}
-	if c.Type, err = e.Str(); err != nil {
+	if e.Nil {
+		c.Type = ""
+	} else if c.Type, err = e.Str(); err != nil {
 		return
 	}
 
@@ -210,7 +220,8 @@ func (b *Billing) Scan(c *Call) (err error) {
 	if e, err = row.Get("subscription_used"); err != nil {
 		return
 	}
-	c.SubscriptionUsed = (e.AsStr()[0] == 't')
+	su := e.AsStr()
+	c.SubscriptionUsed = (su == "t" || su == "true")
 
 	if e, err = row.Get("platform_type"); err != nil {
 		return

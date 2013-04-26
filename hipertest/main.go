@@ -58,7 +58,7 @@ func main() {
 	b, err := s.GetBilling(
 		start, stop,
 		0, 0,
-		true, 0, "outgoing",
+		true, 0, "incoming",
 	)
 	checkErr(err)
 	fmt.Println("Biling za okres od", start, "do", stop)
