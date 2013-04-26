@@ -48,6 +48,15 @@ func main() {
 	s, err := hiperus.NewSession(url, user, passwd, domain)
 	checkErr(err)
 
+	// CustomerList
+	e, err := s.GetCustomerList(0, 0, "")
+	checkErr(err)
+	for _, c := range e.Children {
+		v, err := c.Value()
+		checkErr(err)
+		fmt.Printf("%#v\n", v)
+	}
+
 	// Billing
 	start := time.Date(
 		2013, 4, 16,
