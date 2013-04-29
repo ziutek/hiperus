@@ -220,8 +220,7 @@ func (b *Billing) Scan(c *Call) (err error) {
 	if e, err = row.Get("subscription_used"); err != nil {
 		return
 	}
-	su := e.AsStr()
-	c.SubscriptionUsed = (su == "t" || su == "true")
+	c.SubscriptionUsed = asBool(e)
 
 	if e, err = row.Get("platform_type"); err != nil {
 		return

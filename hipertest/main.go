@@ -49,12 +49,13 @@ func main() {
 	checkErr(err)
 
 	// CustomerList
-	e, err := s.GetCustomerList(0, 0, "")
+	fmt.Println("Lista klientów:")
+	cl, err := s.GetCustomerList(0, 0, "")
 	checkErr(err)
-	for _, c := range e.Children {
-		v, err := c.Value()
-		checkErr(err)
-		fmt.Printf("%#v\n", v)
+	var customer hiperus.Customer
+	for cl.Next() {
+		checkErr(cl.Scan(&customer))
+		fmt.Printf("%+v\n", customer)
 	}
 
 	// Billing
@@ -71,10 +72,10 @@ func main() {
 	)
 	checkErr(err)
 	fmt.Println("Biling za okres od", start, "do", stop)
-	var c hiperus.Call
+	var call hiperus.Call
 	for b.Next() {
-		checkErr(b.Scan(&c))
-		fmt.Printf("%+v\n", c)
+		checkErr(b.Scan(&call))
+		fmt.Printf("%+v\n", call)
 	}
 
 }
