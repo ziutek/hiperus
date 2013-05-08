@@ -84,12 +84,12 @@ func main() {
 	var customer hiperus.Customer
 
 	id := uint32(12982)
-	fmt.Println("Klient o id: ", id)
+	fmt.Println("Klient o id:", id)
 	checkErr(s.GetCustomerData(&customer, id))
 	fmt.Printf("%+v\n", customer)
 
 	id = 2
-	fmt.Println("Klient o extId: ", id)
+	fmt.Println("Klient o extId:", id)
 	checkErr(s.GetCustomerDataExtId(&customer, id))
 	fmt.Printf("%+v\n", customer)
 
@@ -101,7 +101,7 @@ func main() {
 		fmt.Printf("%+v\n", customer)
 	}
 
-	// Billing
+	// Biling
 	start := time.Date(
 		2013, 4, 16,
 		23, 59, 59, 0,
@@ -120,5 +120,32 @@ func main() {
 		checkErr(b.Scan(&call))
 		fmt.Printf("%+v\n", call)
 	}
+
+	// Numery
+	num, cc, err := s.GetFirstFreePlatformNumber("42")
+	checkErr(err)
+	fmt.Println("\n\nPierwszy wolny numer:", cc, num)
+
+	// Cenniki
+	pl, err := s.GetCustomerPricelistList()
+	checkErr(err)
+	fmt.Println("\n\nCenniki:")
+	var p hiperus.CustomerPricelist
+	for pl.Next() {
+		checkErr(pl.Scan(&p))
+		fmt.Printf("%+v\n", p)
+	}
+
+	id = 1843
+	fmt.Println("\n\nCennik o id:", id)
+	p, err = s.GetCustomerPricelist(id, "")
+	checkErr(err)
+	fmt.Printf("%+v\n", p)
+
+	name := "cn1"
+	fmt.Println("\n\nCennik o nazwie:", name)
+	p, err = s.GetCustomerPricelist(0, name)
+	checkErr(err)
+	fmt.Printf("%+v\n", p)
 
 }

@@ -1,7 +1,6 @@
 package hiperus
 
 import (
-	"errors"
 	"github.com/ziutek/soap"
 	"time"
 )
@@ -49,12 +48,6 @@ type Customer struct {
 	PlatformUserAddStamp string    `soap:"platform_user_add_stamp,in"`
 }
 
-func firstRow(rs *soap.Element) (*soap.Element, error) {
-	if len(rs.Children) == 0 {
-		return nil, errors.New("hiperus: empty result set")
-	}
-	return rs.Children[0], nil
-}
 
 func (s *Session) CreateCustomer(c *Customer) (uint32, error) {
 	rs, err := s.cmd("AddCustomer", c)
