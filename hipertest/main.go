@@ -88,6 +88,11 @@ func main() {
 	checkErr(s.GetCustomerData(&customer, id))
 	fmt.Printf("%+v\n", customer)
 
+	id = 2
+	fmt.Println("Klient o extId: ", id)
+	checkErr(s.GetCustomerDataExtId(&customer, id))
+	fmt.Printf("%+v\n", customer)
+
 	fmt.Println("Lista klientów:")
 	cl, err := s.GetCustomerList(0, 0, "")
 	checkErr(err)

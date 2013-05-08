@@ -87,6 +87,33 @@ func (s *Session) GetCustomerData(c *Customer, id uint32) error {
 	return e.LoadStruct(c, false)
 }
 
+type getCustomerId struct {
+	ExtBillingId uint32 `soap:"ext_billing_id "`
+}
+
+func (s *Session) GetCustomerIdByExtBillingId(id uint32) (uint32, error) {
+	rs, err := s.cmd("GetCustomerIDByExtBillingID", getCustomerId{id})
+	if err != nil {
+		return 0, err
+	}
+	e, err := firstRow(rs)
+	if err != nil {
+		return 0, err
+	}
+	if e, err = e.Get("id"); err != nil {
+		return 0, err
+	}
+	return e.AsUint32()
+}
+
+func (s *Session) GetCustomerDataExtId(c *Customer, id uint32) error {
+	id, err := s.GetCustomerIdByExtBillingId(id)
+	if err != nil {
+		return err
+	}
+	return s.GetCustomerData(c, id)
+}
+
 type CustomerList struct {
 	rs *soap.Element
 	n  int
