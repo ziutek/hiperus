@@ -49,9 +49,9 @@ func (s *Session) cmd(action string, arg interface{}) (*soap.Element, error) {
 }
 
 type login struct {
-	Username string `xml:"username"`
-	Password string `xml:"password"`
-	Domain   string `xml:"domain"`
+	Username string `soap:"username"`
+	Password string `soap:"password"`
+	Domain   string `soap:"domain"`
 }
 
 func NewSession(url, username, password, domain string) (*Session, error) {

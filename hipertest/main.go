@@ -48,11 +48,49 @@ func main() {
 	s, err := hiperus.NewSession(url, user, passwd, domain)
 	checkErr(err)
 
-	// CustomerList
+	/*c := &hiperus.Customer{
+		Name:            "test4",
+		Email:           "test4@Lnet.pl",
+		Address:         "Służbowa",
+		StreetNumber:    "135",
+		ApartmentNumber: "162",
+		PostCode:        "92-305",
+		City:            "Łódź",
+		Country:         "Polska",
+
+		BiName:            "test4",
+		BiAddress:         "Służbowa",
+		BiStreetNumber:    "135",
+		BiApartmentNumber: "162",
+		BiPostCode:        "92-305",
+		BiCity:            "Łódź",
+		BiCountry:         "Polska",
+		BiNIP:             "777-222-44-11",
+		BiRegon:           "123456",
+
+		ExtBillingId: 9,
+
+		PaymentType: "postpaid",
+		IsWLR:       true,
+
+		DefaultPriceListId:    1843,
+		ConsentDataProcessing: true,
+	}
+
+	id, err := s.CreateCustomer(c)
+	checkErr(err)
+	fmt.Println("Utworzono uzytkownika o id:", id)*/
+
+	var customer hiperus.Customer
+
+	id := uint32(12982)
+	fmt.Println("Klient o id: ", id)
+	checkErr(s.GetCustomerData(&customer, id))
+	fmt.Printf("%+v\n", customer)
+
 	fmt.Println("Lista klientów:")
 	cl, err := s.GetCustomerList(0, 0, "")
 	checkErr(err)
-	var customer hiperus.Customer
 	for cl.Next() {
 		checkErr(cl.Scan(&customer))
 		fmt.Printf("%+v\n", customer)
@@ -68,10 +106,10 @@ func main() {
 	b, err := s.GetBilling(
 		start, stop,
 		0, 0,
-		true, 0, "incoming",
+		true, 0, "outgoing",
 	)
 	checkErr(err)
-	fmt.Println("Biling za okres od", start, "do", stop)
+	fmt.Println("\n\nBiling za okres od", start, "do", stop, "\n")
 	var call hiperus.Call
 	for b.Next() {
 		checkErr(b.Scan(&call))

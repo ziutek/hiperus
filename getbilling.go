@@ -105,9 +105,7 @@ func (b *Billing) Scan(c *Call) (err error) {
 	if e, err = row.Get("ext_billing_id"); err != nil {
 		return
 	}
-	if e.Nil {
-		c.ExtBillingId = 0
-	} else if c.ExtBillingId, err = e.AsUint32(); err != nil {
+	if c.ExtBillingId, err = e.AsUint32(); err != nil {
 		return
 	}
 
@@ -233,14 +231,14 @@ func (b *Billing) Scan(c *Call) (err error) {
 }
 
 type getBilling struct {
-	From         time.Time `xml:"from"`
-	To           time.Time `xml:"to"`
-	Offset       int       `xml:"offset"`
-	Limit        *int      `xml:"limit"`
-	Compress     bool      `xml:"compress"`
-	SuccessCalls bool      `xml:"success_calls"`
-	CallType     *string   `xml:"calltype"`
-	CustomerId   *int      `xml:"id_customer"`
+	From         time.Time `soap:"from"`
+	To           time.Time `soap:"to"`
+	Offset       int       `soap:"offset"`
+	Limit        *int      `soap:"limit"`
+	Compress     bool      `soap:"compress"`
+	SuccessCalls bool      `soap:"success_calls"`
+	CallType     *string   `soap:"calltype"`
+	CustomerId   *int      `soap:"id_customer"`
 }
 
 // GetBilling pobiera dane billingowe z platformy Hiperus C5
