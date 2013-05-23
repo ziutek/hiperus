@@ -1,12 +1,13 @@
 package hiperus
 
 import (
+	"errors"
 	"github.com/ziutek/soap"
 	"time"
 )
 
 type Customer struct {
-	Id uint32 `soap:"id,in"` // identyfikator klienta
+	Id uint32 `soap:"id,omitempty"` // identyfikator klienta
 
 	Name            string `soap:"name"`             // nazwa klienta
 	Email           string `soap:"email"`            // email klienta
@@ -30,25 +31,24 @@ type Customer struct {
 
 	ExtBillingId uint32 `soap:"ext_billing_id"` // id z syst. zewnętrznego
 
-	IssueInvoice bool   `soap:"issue_invoice"` // wystawiac faktury
-	PaymentType  string `soap:"payment_type"`  // typ platn. {prepaid, postpaid}
-	IsWLR        bool   `soap:"is_wlr"`        // czy klient WLR
-
-	DefaultPriceListId    uint32 `soap:"id_default_pricelist"`
+	IssueInvoice          bool   `soap:"issue_invoice"` // wystawiac faktury
+	DefaultPriceListId    uint32 `soap:"id_default_pricelist,omitempty"`
+	PaymentType           string `soap:"payment_type"` // typ platn. {prepaid, postpaid}
+	DefaultBalanceId      uint32 `soap:"id_default_balance,omitempty"`
+	Active                bool   `soap:"active"`
+	IsWLR                 bool   `soap:"is_wlr"` // czy klient WLR
 	ConsentDataProcessing bool   `soap:"consent_data_processing"`
 
 	ResellerId              uint32 `soap:"id_reseller,in"`
-	Active                  bool   `soap:"active,in"`
 	OpenRegistration        bool   `soap:"open_registration,in"`
 	IsRemoved               bool   `soap:"is_removed,in"`
-	DefaultBalanceId        uint32 `soap:"id_default_balance,in"`
 	CustomerPostpaidLimitId uint32 `soap:"id_customer_postpaid_limit,in"`
 
 	CreateDate           time.Time `soap:"create_date,in"`
 	PlatformUserAddStamp string    `soap:"platform_user_add_stamp,in"`
 }
 
-
+// CreateCustomer tworzy klienta, zwraca jego id
 func (s *Session) CreateCustomer(c *Customer) (uint32, error) {
 	rs, err := s.cmd("AddCustomer", c)
 	if err != nil {
@@ -64,12 +64,23 @@ func (s *Session) CreateCustomer(c *Customer) (uint32, error) {
 	return e.AsUint32()
 }
 
-type getCustomerData struct {
+func (s *Session) ChangeCustomerData(c *Customer) error {
+	_, err := s.cmd("SaveCustomerData", c)
+	return err
+}
+
+type customerId struct {
 	CustomerId uint32 `soap:"id_customer"`
 }
 
+// DelCustomer usuwa dane klienata oraz zwalnia wszystkie przydzielone mu zasoby
+func (s *Session) DelCustomer(id uint32) error {
+	_, err := s.cmd("DelCustomer", customerId{id})
+	return err
+}
+
 func (s *Session) GetCustomerData(c *Customer, id uint32) error {
-	rs, err := s.cmd("GetCustomerData", getCustomerData{id})
+	rs, err := s.cmd("GetCustomerData", customerId{id})
 	if err != nil {
 		return err
 	}
@@ -97,6 +108,30 @@ func (s *Session) GetCustomerIdByExtBillingId(id uint32) (uint32, error) {
 		return 0, err
 	}
 	return e.AsUint32()
+}
+
+type searchCustomer struct {
+	Name string `soap:"name"`
+}
+
+func (s *Session) SearchCustomer(name string) (*Customer, error) {
+	rs, err := s.cmd("SearchCustomer", searchCustomer{name})
+	if err != nil {
+		return nil, err
+	}
+	if len(rs.Children) > 1 {
+		return nil, errors.New(
+			"hiperus: there is more than one customer with name:" + name,
+		)
+
+	}
+	e, err := firstRow(rs)
+	if err != nil {
+		return nil, err
+	}
+	c := new(Customer)
+	err = e.LoadStruct(c, false)
+	return c, err
 }
 
 func (s *Session) GetCustomerDataExtId(c *Customer, id uint32) error {
