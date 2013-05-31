@@ -148,4 +148,12 @@ func main() {
 	checkErr(err)
 	fmt.Printf("%+v\n", p)
 
+	// Terminale
+	tl, err := s.GetTerminalList(12372, 0, 0)
+	checkErr(err)
+	var term hiperus.Terminal
+	for tl.Next() {
+		checkErr(tl.Scan(&term))
+		fmt.Printf("%+v\n", term)
+	}
 }

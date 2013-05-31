@@ -155,8 +155,8 @@ func (cl *CustomerList) Next() bool {
 	return true
 }
 
-func (b *CustomerList) Scan(c *Customer) (err error) {
-	row := b.rs.Children[b.n-1]
+func (cl *CustomerList) Scan(c *Customer) (err error) {
+	row := cl.rs.Children[cl.n-1]
 	return row.LoadStruct(c, false)
 }
 
