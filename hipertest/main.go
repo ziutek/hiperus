@@ -148,12 +148,33 @@ func main() {
 	checkErr(err)
 	fmt.Printf("%+v\n", p)
 
+	custId := uint32(12982)
+
 	// Terminale
-	tl, err := s.GetTerminalList(12372, 0, 0)
+	/*term := hiperus.Terminal{
+		Name:          "*****",
+		Password:      "*****",
+		ScreenNumbers: true,
+		CustomerId:    custId,
+		PriceListId:   1843,
+	}
+	tid, err := s.AddTerminal(&term)
+	checkErr(err)
+	fmt.Println("Dodano terminal o id:", tid)*/
+
+	tl, err := s.GetTerminalList(custId, 0, 0)
 	checkErr(err)
 	var term hiperus.Terminal
 	for tl.Next() {
 		checkErr(tl.Scan(&term))
 		fmt.Printf("%+v\n", term)
+	}
+
+	nl, err := s.GetPSTNNumberList(12372, 0, 0)
+	checkErr(err)
+	var pn hiperus.PSTNNumber
+	for nl.Next() {
+		checkErr(nl.Scan(&pn))
+		fmt.Printf("%+v\n", pn)
 	}
 }

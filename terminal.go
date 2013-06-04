@@ -6,7 +6,7 @@ import (
 )
 
 type Terminal struct {
-	Id uint32 `soap:"id"` // identifikator terminala
+	Id uint32 `soap:"id,in"` // identifikator terminala
 
 	Name          string `soap:"username"`       // nazwa terminala
 	Password      string `soap:"password"`       // hasło terminala
@@ -19,19 +19,46 @@ type Terminal struct {
 	CustomerName  string `soap:"customer_name,in"`
 	PriceListName string `soap:"pricelist_name,in"`
 
-	BalanceValue     float64   `soap:"balance_value,in"`
+	BalanceValue float64 `soap:"balance_value,in"` // środki na koncie
+
 	AuthId           uint32    `soap:"id_auth,in"`
-	SubscriptionId   uint32    `soap:"id_subscription,in"`
-	SubscriptionFrom time.Time `soap:"subscription_from,in"`
-	SubscriptionTo   time.Time `soap:"subscription_to,in"`
-	ValueLeft        float64   `soap:"value_left","`
-	
-	// TODO
+	SubscriptionId   uint32    `soap:"id_subscription,in"`   // id abonamentu
+	SubscriptionFrom time.Time `soap:"subscription_from,in"` // od kiedy abon.
+	SubscriptionTo   time.Time `soap:"subscription_to,in"`   // do kiedy abon.
+	ValueLeft        float64   `soap:"value_left","`         // pozost. w abon.
+
+	LocationId uint32 `soap:"id_terminal_location,in"` // id lokalizacji term.
+	AreaCode   string `soap:"area_code,in"`            // strefa numeracyjna
+	Borough    string `soap:"borough,in"`              // gmina dla poł. alarm.
+	County     string `soap:"county,in"`               // powiad dla poł. alarm.
+	Province   string `soap:"province,in"`             // województwo
+
+	SIPProxy string `soap:"sip_proxy,in"`
 }
 
-/*func (s *Session) AddTerminal(t *Terminal) {
+func (s *Session) AddTerminal(t *Terminal) (uint32, error) {
 	rs, err := s.cmd("AddTerminal", t)
-}*/
+	if err != nil {
+		return 0, err
+	}
+	e, err := firstRow(rs)
+	if err != nil {
+		return 0, err
+	}
+	if e, err = e.Get("id_terminal"); err != nil {
+		return 0, err
+	}
+	return e.AsUint32()
+}
+
+type terminalId struct {
+	TerminalId uint32 `soap:"id_terminal"`
+}
+
+func (s *Session) DelTerminal(id uint32) error {
+	_, err := s.cmd("DelTerminal", terminalId{id})
+	return err
+}
 
 type TerminalList struct {
 	rs *soap.Element
