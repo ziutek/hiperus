@@ -98,3 +98,40 @@ func (s *Session) GetPSTNNumberList(customerId uint32, offset, limit int) (
 	}
 	return &PSTNNumberList{rs, 0}, nil
 }
+
+type addExtension struct {
+	CustomerId  uint32 `soap:"id_customer"`
+	TerminalId  uint32 `soap:"id_terminal"`
+	Number      string `soap:"number"`
+	CountryCode string `soap:"country_code"`
+	IsMain      bool   `soap:"is_main"`
+	CLIR        bool   `soap:"clir"`
+	VirtualFax  bool   `soap:"virtual_fax"`
+}
+
+func (s *Session) AddExtension(customerId, terminalId uint32, number,
+	countryCode string, isMain, clir, virtualFax bool) (uint32, error) {
+
+	arg := addExtension{
+		CustomerId:  customerId,
+		TerminalId:  terminalId,
+		Number:      number,
+		CountryCode: countryCode,
+		IsMain:      isMain,
+		CLIR:        clir,
+		VirtualFax:  virtualFax,
+	}
+
+	rs, err := s.cmd("AddExtension", &arg)
+	if err != nil {
+		return 0, err
+	}
+	e, err := firstRow(rs)
+	if err != nil {
+		return 0, err
+	}
+	if e, err = e.Get("id_extension"); err != nil {
+		return 0, err
+	}
+	return e.AsUint32()
+}

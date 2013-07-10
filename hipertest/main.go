@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/ziutek/hiperus"
 	"os"
-	"time"
 )
 
 func checkErr(err error) {
@@ -102,7 +101,7 @@ func main() {
 	}
 
 	// Biling
-	start := time.Date(
+	/*start := time.Date(
 		2013, 4, 16,
 		23, 59, 59, 0,
 		time.Local,
@@ -119,12 +118,7 @@ func main() {
 	for b.Next() {
 		checkErr(b.Scan(&call))
 		fmt.Printf("%+v\n", call)
-	}
-
-	// Numery
-	num, cc, err := s.GetFirstFreePlatformNumber("42")
-	checkErr(err)
-	fmt.Println("\n\nPierwszy wolny numer:", cc, num)
+	}*/
 
 	// Cenniki
 	pl, err := s.GetCustomerPricelistList()
@@ -177,4 +171,13 @@ func main() {
 		checkErr(nl.Scan(&pn))
 		fmt.Printf("%+v\n", pn)
 	}
+
+	// Numery
+	num, cc, err := s.GetFirstFreePlatformNumber("42")
+	checkErr(err)
+	fmt.Println("\n\nPierwszy wolny numer:", cc, num)
+
+	/*extId, err := s.AddExtension(custId, 24033, num, cc, true, false, false)
+	checkErr(err)
+	fmt.Println("\n\nDodano numer o id:", extId)*/
 }

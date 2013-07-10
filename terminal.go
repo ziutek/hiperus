@@ -13,8 +13,9 @@ type Terminal struct {
 	ScreenNumbers bool   `soap:"screen_numbers"` // czy sprawdzać przesyłne num.
 	T38Fax        bool   `soap:"t38_fax"`        // czy obsługiwać T38 fax
 
-	CustomerId  uint32 `soap:"id_customer"`
-	PriceListId uint32 `soap:"id_pricelist"`
+	CustomerId     uint32 `soap:"id_customer"`
+	PriceListId    uint32 `soap:"id_pricelist"`
+	SubscriptionId uint32 `soap:"id_subscription,omitempty"` // id abonamentu
 
 	CustomerName  string `soap:"customer_name,in"`
 	PriceListName string `soap:"pricelist_name,in"`
@@ -22,7 +23,6 @@ type Terminal struct {
 	BalanceValue float64 `soap:"balance_value,in"` // środki na koncie
 
 	AuthId           uint32    `soap:"id_auth,in"`
-	SubscriptionId   uint32    `soap:"id_subscription,in"`   // id abonamentu
 	SubscriptionFrom time.Time `soap:"subscription_from,in"` // od kiedy abon.
 	SubscriptionTo   time.Time `soap:"subscription_to,in"`   // do kiedy abon.
 	ValueLeft        float64   `soap:"value_left","`         // pozost. w abon.
